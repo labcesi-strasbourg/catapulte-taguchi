@@ -1,7 +1,7 @@
 local render_cut = false
 
 local cfg = {
-  ep=4,
+  ep=6.7,
   kerf=0.2,
   base = {
     len=200,
@@ -91,12 +91,29 @@ end
 all_bras_axis = union(all_bras_axis)
 bras = difference(bras, all_bras_axis)
 
+local butee1 = difference{
+    cube(cfg.ep, cfg.base.width, cfg.base.width),
+    translate(0,cfg.ep,0) * 
+        cube(2*cfg.ep, cfg.ep - 2*cfg.kerf, cfg.base.width/2),
+      translate(0,-cfg.ep,0) * 
+        cube(2*cfg.ep, cfg.ep - 2*cfg.kerf, cfg.base.width/2)
+    }
+
+local butee2 = difference{
+    cube(cfg.ep, cfg.base.width, 1.5*cfg.base.width),
+    translate(0,cfg.ep,0) * 
+        cube(2*cfg.ep, cfg.ep - 2*cfg.kerf, cfg.base.width/2),
+      translate(0,-cfg.ep,0) * 
+        cube(2*cfg.ep, cfg.ep - 2*cfg.kerf, cfg.base.width/2)
+    }
+
 local all_mounted_pieces = union {
   translate(0, -cfg.ep, 0) * base_left,
   base_middle,
   translate(0, cfg.ep, 0) * base_right,
   translate(cfg.stabil.pos, 0, 0) * stabil,
-  translate(-1.5*cfg.base.width,0,(cfg.axis.pos[1])*cfg.base.width) * rotate(0,-15,0) * bras
+  translate(-1.5*cfg.base.width,0,(cfg.axis.pos[1])*cfg.base.width) * rotate(0,-15,0) * bras,
+  translate(cfg.stabil.pos+cfg.ep, 0, cfg.base.width/2) * butee2
 }
 
 local min_ecart =
@@ -111,8 +128,10 @@ local all_cutted = union{
   rotate(90,0,0) * base_left,
   translate(-cfg.base.width/2, -min_ecart,0) * rotate(90,0,180) * base_right,
   translate(2*cfg.base.width,-min_ecart/2,0) * rotate(90,0,90) * base_middle,
-  translate(-4*cfg.base.width,-3*cfg.base.width,0) * rotate(0,90,0) * stabil,
+  translate(-4.5*cfg.base.width,-3*cfg.base.width,0) * rotate(0,90,0) * stabil,
   translate(0, cfg.base.width/2 + 3 * cfg.kerf, 0) * rotate(90,0,0) * bras,
+  translate(-3.5*cfg.base.width+5*cfg.kerf,-3* cfg.base.width,0) * rotate(0,90,0) * butee1,
+  translate(-3.5*cfg.base.width+5*cfg.kerf,-4* cfg.base.width-5*cfg.kerf,0) * rotate(0,90,0) * butee2,
 }
 
 
