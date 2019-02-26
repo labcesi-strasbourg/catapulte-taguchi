@@ -25,6 +25,9 @@ local cfg = {
   },
   butee = {
     coeff = {1, 2}
+  },
+  ridelle = {
+    width = 5
   }
 }
 
@@ -113,9 +116,20 @@ local cup = difference{
   translate(cfg.base.width/2,0,0) * ccube(cfg.base.width/2, cfg.ep-cfg.kerf, 2*cfg.ep) --fit with bras
 }
 
+local ridelle = intersection{
+  difference{
+    cup,
+    translate(-cfg.base.width,0,0) * ccylinder(cfg.base.width-cfg.ridelle.width, cfg.ep),
+  },
+  translate(-1.5*cfg.base.width,0,0) * ccube(cfg.base.width, 2*cfg.base.width,2*cfg.ep)
+}
+
 mobile = union{
   bras,
-  translate(3*cfg.base.width-cfg.bras.len,0,0) * cup
+  translate(3*cfg.base.width-cfg.bras.len,0,0) * union{
+    cup,
+    translate(0,0,cfg.ep) * ridelle
+  }
 }
 
 local butee1 = difference{
@@ -160,7 +174,8 @@ local all_cutted = union{
   translate(0, cfg.base.width/2 + 3 * cfg.kerf, 0) * rotate(90,0,0) * bras,
   translate(-3.5*cfg.base.width+5*cfg.kerf,-3* cfg.base.width,0) * rotate(0,90,0) * butee1,
   translate(-3*cfg.base.width+5*cfg.kerf,-3.5* cfg.base.width-5*cfg.kerf,0) * rotate(0,90,-90) * butee2,
-  translate(cfg.base.len/2 + cfg.base.width + 5 * cfg.kerf,0,0) * rotate(0,0,90) * cup
+  translate(cfg.base.len/2 + cfg.base.width + 5 * cfg.kerf,0,0) * rotate(0,0,90) * cup,
+  translate(cfg.base.len/2 + cfg.base.width + 5 * cfg.kerf, -1*cfg.base.width,0) * rotate(0,0,90) * ridelle
 }
 
 local to_render
